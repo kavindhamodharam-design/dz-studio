@@ -10,7 +10,7 @@ type AgbSection = { title: string; text: string };
 
 const contactData = {
   companyName: "DZ Studios",
-  email: "hello@digitalbusinessswiss.ch",
+  email: "info@dzstudio.ch",
   whatsappNumber: "41763054144",
   whatsappText: "Hallo DZ Studios, ich interessiere mich für eine Website und möchte gerne eine Anfrage senden.",
   partners: [
@@ -92,6 +92,7 @@ export function runContentTests(): TestResult[] {
     { name: "umlauts are restored", pass: contactData.whatsappText.includes("für") && contactData.partners[1].name.includes("ü") },
     { name: "agb umlauts are restored", pass: agbSections[0].text.includes("Geschäftsbedingungen") && agbSections[6].title.includes("Gewährleistung") },
     { name: "email link exists", pass: emailLink.startsWith("mailto:") },
+    { name: "fixed email address is used", pass: contactData.email === "info@dzstudio.ch" && emailLink.includes("info@dzstudio.ch") },
     { name: "whatsapp link exists", pass: whatsappLink.startsWith("https://wa.me/") },
     { name: "package whatsapp includes starter", pass: decodeURIComponent(createPackageWhatsappLink("Starter")).includes("Starter") },
     { name: "two partners", pass: contactData.partners.length === 2 },
@@ -371,7 +372,26 @@ function Footer({ setPage }: { setPage: (page: PageName) => void }) {
 }
 
 function StickyContactButton() {
-  return <a href={whatsappLink} className="sticky-cta fixed bottom-5 right-5 z-50 hidden rounded-full bg-white px-5 py-4 text-sm font-bold text-slate-950 shadow-2xl transition hover:bg-slate-200 md:inline-flex">WhatsApp Anfrage</a>;
+  return (
+    <div className="fixed bottom-5 right-5 z-50 hidden flex-col gap-3 md:flex">
+      <a
+        href={emailLink}
+        aria-label="E-Mail Anfrage senden"
+        title="E-Mail Anfrage senden"
+        className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-slate-950 text-white shadow-2xl transition hover:bg-white/10"
+      >
+        <Icon name="mail" className="h-6 w-6" />
+      </a>
+      <a
+        href={whatsappLink}
+        aria-label="WhatsApp Anfrage senden"
+        title="WhatsApp Anfrage senden"
+        className="sticky-cta inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-950 shadow-2xl transition hover:bg-slate-200"
+      >
+        <Icon name="phone" className="h-6 w-6" />
+      </a>
+    </div>
+  );
 }
 
 function WebagenturWebsite() {
