@@ -52,9 +52,9 @@ const services: ServiceItem[] = [
 ];
 
 const packages: PackageItem[] = [
-  { name: "Starter", price: "ab CHF 690", text: "Für kleine Läden, die schnell professionell online gehen möchten.", points: ["1 Seite", "Modernes Design", "Kontaktbutton", "Mobile Optimierung"] },
-  { name: "Business", price: "ab CHF 1'490", text: "Für Firmen, die mehrere Seiten und einen starken Auftritt brauchen.", points: ["Bis 5 Seiten", "Texte und Struktur", "Google-Grundoptimierung", "Kontaktformular"] },
-  { name: "Premium", price: "auf Anfrage", text: "Für Shops und Unternehmen mit besonderen Anforderungen.", points: ["Mehrsprachig", "Online-Shop möglich", "Branding", "Support"] },
+  { name: "Starter", price: "ab CHF 890", text: "Die solide Visitenkarte im Web.", points: ["1-Seiten Website (One-Pager)", "Individuelles Design", "Mobil optimiert", "Kontaktformular", "Basis-SEO", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
+  { name: "Business", price: "ab CHF 1’890", text: "Die professionelle Website für KMU.", points: ["Bis zu 5 Unterseiten", "Individuelles Design", "Erweiterte SEO-Optimierung", "Google Maps & Analytics", "Hosting CHF 25 / Monat"] },
+  { name: "Premium", price: "ab CHF 3’490", text: "Massgeschneidert mit allen Extras.", points: ["Unbegrenzte Seiten", "Eigenes CMS / Blog", "Mehrsprachigkeit", "Performance-Tuning", "Hosting CHF 25 / Monat"] },
 ];
 
 const industries = ["Restaurants", "Coiffeure", "Kioske", "Handwerker", "Kleine Shops", "Vereine", "Startups", "Beauty-Studios"];
@@ -86,6 +86,8 @@ export function runContentTests(): TestResult[] {
   return [
     { name: "three services", pass: services.length === 3 },
     { name: "three packages", pass: packages.length === 3 },
+    { name: "updated package prices", pass: packages[0].price === "ab CHF 890" && packages[1].price === "ab CHF 1’890" && packages[2].price === "ab CHF 3’490" },
+    { name: "hosting included in all packages", pass: packages.every((pack) => pack.points.includes("Hosting CHF 25 / Monat")) },
     { name: "four process steps", pass: processSteps.length === 4 },
     { name: "agb has nine sections", pass: agbSections.length === 9 },
     { name: "agb contains Swiss law", pass: agbSections[8].text.includes("schweizerisches Recht") },
@@ -100,6 +102,7 @@ export function runContentTests(): TestResult[] {
     { name: "impressum page exists", pass: typeof ImpressumPage === "function" },
     { name: "configurator exists", pass: typeof ProjectConfiguratorSection === "function" },
     { name: "responsive data exists", pass: industries.length >= 8 && benefits.length === 3 },
+    { name: "website option is first configurator option", pass: configuratorOptions[0] === "Website" },
   ];
 }
 
@@ -304,17 +307,21 @@ function WhyUsSection() {
 }
 
 function ProjectConfiguratorSection() {
-  const [selected, setSelected] = useState<string[]>([]);
-  const selectedText = selected.length > 0 ? selected.join(", ") : "Noch nichts ausgewählt";
-  const recommended = selected.includes("Online-Shop") || selected.includes("Mehrsprachig") ? "Premium" : selected.length >= 4 ? "Business" : selected.length > 0 ? "Starter" : "Noch keine Auswahl";
+  const requiredOption = "Website";
+  const [selected, setSelected] = useState<string[]>([requiredOption]);
+  const selectedText = selected.join(", ");
+  const recommended = selected.includes("Online-Shop") || selected.includes("Mehrsprachig") ? "Premium" : selected.length >= 4 ? "Business" : "Starter";
   const configuratorWhatsappText = "Hallo DZ Studios, ich interessiere mich für folgendes Paket: " + recommended + ". Meine Auswahl: " + selectedText + ".";
   const configuratorWhatsappLink = useMemo(() => "https://wa.me/" + contactData.whatsappNumber + "?text=" + encodeURIComponent(configuratorWhatsappText), [configuratorWhatsappText]);
-  function toggleOption(option: string) { setSelected((items) => items.includes(option) ? items.filter((item) => item !== option) : [...items, option]); }
+  function toggleOption(option: string) {
+    if (option === requiredOption) return;
+    setSelected((items) => items.includes(option) ? items.filter((item) => item !== option) : [...items, option]);
+  }
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="grid gap-8 lg:grid-cols-2">
         <div><SectionTitle kicker="Mini-Konfigurator" title="Klicke an, was du brauchst." /><p className="text-base leading-8 text-slate-300 sm:text-lg">Jede Auswahl verändert automatisch die Paket-Empfehlung. So sieht der Kunde sofort, ob Starter, Business oder Premium besser passt.</p></div>
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6"><div className="mb-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-slate-300">Auswahl: <span className="font-semibold text-white">{selectedText}</span></div><div className="grid gap-3 sm:grid-cols-2">{configuratorOptions.map((option) => { const isSelected = selected.includes(option); return <button key={option} type="button" onClick={() => toggleOption(option)} className={isSelected ? "flex items-center justify-between rounded-2xl border border-white bg-white px-5 py-4 text-left font-semibold text-slate-950 transition" : "flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left font-semibold text-white transition hover:bg-white/10"}><span>{option}</span>{isSelected && <Icon name="check" className="h-5 w-5" />}</button>; })}</div><div className="mt-6 rounded-3xl bg-slate-950 p-6"><p className="text-sm text-slate-400">Empfohlenes Paket</p><p className="mt-2 text-3xl font-bold text-white sm:text-4xl">{recommended}</p><p className="mt-3 text-slate-300">{selected.length > 0 ? "Basierend auf: " + selectedText : "Bitte zuerst eine oder mehrere Optionen auswählen."}</p><a href={selected.length > 0 ? configuratorWhatsappLink : "#"} className={selected.length > 0 ? "mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200" : "mt-6 inline-flex w-full cursor-not-allowed items-center justify-center rounded-full bg-white/20 px-6 py-4 text-center font-bold text-white/60"}>Dieses Paket anfragen</a></div></div>
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6"><div className="mb-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-slate-300">Auswahl: <span className="font-semibold text-white">{selectedText}</span></div><div className="grid gap-3 sm:grid-cols-2">{configuratorOptions.map((option) => { const isSelected = selected.includes(option); const isRequired = option === requiredOption; return <button key={option} type="button" onClick={() => toggleOption(option)} aria-pressed={isSelected} aria-disabled={isRequired} className={isSelected ? "flex items-center justify-between rounded-2xl border border-white bg-white px-5 py-4 text-left font-semibold text-slate-950 transition" + (isRequired ? " cursor-not-allowed opacity-90" : "") : "flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left font-semibold text-white transition hover:bg-white/10"}><span>{option}{isRequired ? " (Pflicht)" : ""}</span>{isSelected && <Icon name="check" className="h-5 w-5" />}</button>; })}</div><div className="mt-6 rounded-3xl bg-slate-950 p-6"><p className="text-sm text-slate-400">Empfohlenes Paket</p><p className="mt-2 text-3xl font-bold text-white sm:text-4xl">{recommended}</p><p className="mt-3 text-slate-300">Basierend auf: {selectedText}</p><a href={configuratorWhatsappLink} className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200">Dieses Paket anfragen</a></div></div>
       </div>
     </section>
   );
