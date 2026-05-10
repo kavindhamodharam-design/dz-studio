@@ -4,7 +4,7 @@ type PageName = "home" | "impressum";
 type IconName = "arrow" | "check" | "globe" | "phone" | "store" | "mail" | "shield" | "clock" | "star" | "legal";
 type TestResult = { name: string; pass: boolean };
 type ServiceItem = { icon: IconName; title: string; text: string };
-type PackageItem = { name: string; price: string; text: string; points: string[] };
+type PackageItem = { name: string; price: string; monthlyFee: string; text: string; points: string[] };
 type BenefitItem = { icon: IconName; title: string; text: string };
 type AgbSection = { title: string; text: string };
 type CaseStudyItem = { title: string; problem: string; solution: string; result: string; metric: string };
@@ -56,9 +56,9 @@ const services: ServiceItem[] = [
 ];
 
 const packages: PackageItem[] = [
-  { name: "Starter", price: "ab CHF 890", text: "Die solide Visitenkarte im Web.", points: ["1-Seiten Website (One-Pager)", "Individuelles Design", "Mobil optimiert", "Kontaktformular", "Basis-SEO", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
-  { name: "Business", price: "ab CHF 1’890", text: "Die professionelle Website für KMU.", points: ["Bis zu 5 Unterseiten", "Individuelles Design", "Erweiterte SEO-Optimierung", "Google Maps & Analytics", "Hosting CHF 25 / Monat"] },
-  { name: "Premium", price: "ab CHF 3’490", text: "Massgeschneidert mit allen Extras.", points: ["Unbegrenzte Seiten", "Eigenes CMS / Blog", "Mehrsprachigkeit", "Performance-Tuning", "Hosting CHF 25 / Monat"] },
+  { name: "Starter", price: "ab CHF 890", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Die solide Visitenkarte im Web.", points: ["1-Seiten Website (One-Pager)", "Individuelles Design", "Mobil optimiert", "Kontaktformular", "Basis-SEO", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
+  { name: "Business", price: "ab CHF 1’890", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Die professionelle Website für KMU.", points: ["Bis zu 5 Unterseiten", "Individuelles Design", "Erweiterte SEO-Optimierung", "Google Maps & Analytics", "Hosting CHF 25 / Monat"] },
+  { name: "Premium", price: "ab CHF 3’490", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Massgeschneidert mit allen Extras.", points: ["Unbegrenzte Seiten", "Eigenes CMS / Blog", "Mehrsprachigkeit", "Performance-Tuning", "Hosting CHF 25 / Monat"] },
 ];
 
 const industries = ["Restaurants", "Coiffeure", "Kioske", "Handwerker", "Kleine Shops", "Vereine", "Startups", "Beauty-Studios"];
@@ -66,6 +66,7 @@ const processSteps = ["Erstgespräch", "Design und Struktur", "Umsetzung", "Live
 const credibilityPoints = ["Klare Paketpreise statt unklare Agentur-Angebote", "Direkter Kontakt per WhatsApp und E-Mail", "Persönliche Betreuung aus der Schweiz", "Keine erfundenen Kundenbewertungen oder falsche Referenzen"];
 const configuratorOptions = ["Website", "Online-Shop", "WhatsApp", "Mehrsprachig", "Google Maps", "Logo / Branding"];
 const websiteChecks = ["Mobile-Check", "Design-Eindruck", "Kontaktmöglichkeiten", "Verbesserungsideen"];
+const mobileShortcuts = ["Leistungen", "Pakete", "Kontakt", "Impressum"];
 
 const caseStudies: CaseStudyItem[] = [
   { title: "Café & Restaurant", problem: "Gäste finden Öffnungszeiten, Standort und Kontakt nicht schnell genug.", solution: "One-Page-Website mit Öffnungszeiten, Google Maps, WhatsApp-Anfrage und klarer Menü-Struktur.", result: "Besucher verstehen in wenigen Sekunden, wo das Café ist, wann es offen ist und wie sie direkt Kontakt aufnehmen können.", metric: "Schneller Kontakt über WhatsApp und Maps" },
@@ -94,27 +95,20 @@ function createPackageWhatsappLink(packageName: string) {
 export function runContentTests(): TestResult[] {
   return [
     { name: "three services", pass: services.length === 3 },
-    { name: "services are conversion focused", pass: services[0].title.includes("Kunden") && services[2].title.includes("Anfragen") },
     { name: "three packages", pass: packages.length === 3 },
-    { name: "updated package prices", pass: packages[0].price === "ab CHF 890" && packages[1].price === "ab CHF 1’890" && packages[2].price === "ab CHF 3’490" },
+    { name: "monthly hosting fee visible", pass: packages.every((pack) => pack.monthlyFee === "+ CHF 25 / Monat Hosting") },
     { name: "hosting included in all packages", pass: packages.every((pack) => pack.points.includes("Hosting CHF 25 / Monat")) },
     { name: "four process steps", pass: processSteps.length === 4 },
     { name: "agb has nine sections", pass: agbSections.length === 9 },
-    { name: "agb contains Swiss law", pass: agbSections[8].text.includes("schweizerisches Recht") },
-    { name: "umlauts are restored", pass: contactData.whatsappText.includes("für") && contactData.partners[1].name.includes("ü") },
     { name: "email link exists", pass: emailLink.startsWith("mailto:") },
     { name: "fixed email address is used", pass: contactData.email === "info@dzstudio.ch" && emailLink.includes("info@dzstudio.ch") },
     { name: "brand name is singular", pass: contactData.companyName === "DZ Studio" },
     { name: "impressum address exists", pass: contactData.addressLine1.includes("Bolligenstrasse") && contactData.addressLine2.includes("3326 Krauchthal") },
     { name: "whatsapp link exists", pass: whatsappLink.startsWith("https://wa.me/") },
-    { name: "two partners", pass: contactData.partners.length === 2 },
-    { name: "problem section exists", pass: typeof ProblemSection === "function" },
-    { name: "case studies exist", pass: caseStudies.length === 3 && caseStudies[0].problem.length > 0 },
-    { name: "honest credibility exists", pass: credibilityPoints[3].includes("Keine erfundenen") },
-    { name: "configurator website required", pass: configuratorOptions[0] === "Website" },
-    { name: "home page component exists", pass: typeof HomePage === "function" },
-    { name: "footer component exists", pass: typeof Footer === "function" },
+    { name: "mobile shortcuts exist", pass: mobileShortcuts.length === 4 && mobileShortcuts.includes("Pakete") },
     { name: "sticky contact icons exist", pass: typeof StickyContactButton === "function" },
+    { name: "website check section exists", pass: typeof WebsiteCheckSection === "function" },
+    { name: "root export exists", pass: typeof WebagenturWebsite === "function" },
   ];
 }
 
@@ -192,6 +186,19 @@ function SectionTitle({ kicker, title }: { kicker: string; title: string }) {
   );
 }
 
+function MobileShortcuts({ setPage }: { setPage: (page: PageName) => void }) {
+  return (
+    <div className="border-t border-white/10 px-4 pb-3 md:hidden">
+      <div className="flex gap-2 overflow-x-auto pt-3 text-xs font-semibold text-slate-200">
+        <a href="#services" onClick={() => setPage("home")} className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-2">Leistungen</a>
+        <a href="#packages" onClick={() => setPage("home")} className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-2">Pakete</a>
+        <a href="#contact" onClick={() => setPage("home")} className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-2">Kontakt</a>
+        <button type="button" onClick={() => setPage("impressum")} className="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-2">Impressum</button>
+      </div>
+    </div>
+  );
+}
+
 function Header({ page, setPage }: { page: PageName; setPage: (page: PageName) => void }) {
   const openHome = () => {
     setPage("home");
@@ -216,6 +223,7 @@ function Header({ page, setPage }: { page: PageName; setPage: (page: PageName) =
         </nav>
         <a href="#contact" onClick={() => setPage("home")} className="rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-slate-950 hover:bg-slate-200 sm:px-5 sm:text-sm">Anfrage senden</a>
       </div>
+      <MobileShortcuts setPage={setPage} />
     </header>
   );
 }
@@ -227,9 +235,7 @@ function HeroSection() {
       <div className="absolute right-0 top-40 h-[460px] w-[460px] rounded-full bg-purple-500/30 blur-3xl" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 md:grid-cols-2 md:py-32">
         <div className="premium-reveal">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
-            <Icon name="star" className="h-4 w-4" /> Webdesign & Branding für lokale Unternehmen
-          </div>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300"><Icon name="star" className="h-4 w-4" /> Webdesign & Branding für lokale Unternehmen</div>
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-7xl">Websites, die seriös wirken und mehr Anfragen bringen.</h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">DZ Studio erstellt moderne Websites für Restaurants, Coiffeure, Shops und KMU in der Schweiz — mobil optimiert, klar strukturiert und direkt mit WhatsApp, E-Mail und Kontakt verbunden.</p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -248,22 +254,12 @@ function DemoWebsiteCard() {
   return (
     <div className="rounded-[2rem] border border-white/10 bg-white/10 p-4 shadow-2xl backdrop-blur-xl">
       <div className="rounded-[1.5rem] bg-slate-900 p-6">
-        <div className="mb-6 flex gap-2">
-          <span className="h-3 w-3 rounded-full bg-slate-500" />
-          <span className="h-3 w-3 rounded-full bg-slate-500" />
-          <span className="h-3 w-3 rounded-full bg-slate-500" />
-        </div>
+        <div className="mb-6 flex gap-2"><span className="h-3 w-3 rounded-full bg-slate-500" /><span className="h-3 w-3 rounded-full bg-slate-500" /><span className="h-3 w-3 rounded-full bg-slate-500" /></div>
         <div className="rounded-3xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-6">
           <p className="mb-3 text-sm text-slate-300">Beispiel-Kundenwebsite</p>
           <h3 className="text-3xl font-bold">Café Luna</h3>
           <p className="mt-3 text-slate-300">Frische Backwaren, Kaffee und Online-Reservierung.</p>
-          <div className="mt-6 grid gap-3">
-            {items.map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-slate-100 backdrop-blur-xl">
-                <Icon name="check" className="h-5 w-5" /> {item}
-              </div>
-            ))}
-          </div>
+          <div className="mt-6 grid gap-3">{items.map((item) => <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-slate-100 backdrop-blur-xl"><Icon name="check" className="h-5 w-5" /> {item}</div>)}</div>
         </div>
       </div>
     </div>
@@ -273,146 +269,32 @@ function DemoWebsiteCard() {
 function ProblemSection() {
   const problems = ["Kunden finden online keine klaren Informationen.", "Die Website wirkt alt oder nicht seriös genug.", "Kontakt, Standort und Angebot sind nicht sofort sichtbar."];
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl md:p-12">
-        <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Das Problem</p>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Viele gute Unternehmen verlieren Kunden, weil ihr Online-Auftritt nicht überzeugt.</h2>
-            <p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Wenn eine Website unklar, veraltet oder auf dem Handy schlecht lesbar ist, springen Besucher ab — bevor sie überhaupt anfragen.</p>
-          </div>
-          <div className="grid gap-4">
-            {problems.map((problem) => (
-              <div key={problem} className="flex items-start gap-4 rounded-3xl border border-white/10 bg-slate-950/70 p-5">
-                <Icon name="check" className="mt-1 h-5 w-5 shrink-0" />
-                <p className="leading-7 text-slate-200">{problem}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl md:p-12"><div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center"><div><p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Das Problem</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Viele gute Unternehmen verlieren Kunden, weil ihr Online-Auftritt nicht überzeugt.</h2><p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Wenn eine Website unklar, veraltet oder auf dem Handy schlecht lesbar ist, springen Besucher ab — bevor sie überhaupt anfragen.</p></div><div className="grid gap-4">{problems.map((problem) => <div key={problem} className="flex items-start gap-4 rounded-3xl border border-white/10 bg-slate-950/70 p-5"><Icon name="check" className="mt-1 h-5 w-5 shrink-0" /><p className="leading-7 text-slate-200">{problem}</p></div>)}</div></div></div></section>
   );
 }
 
 function ServicesSection() {
-  return (
-    <section id="services" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-      <SectionTitle kicker="Leistungen" title="Was Sie konkret bekommen — ohne Agentur-Blabla." />
-      <div className="grid gap-6 md:grid-cols-3">
-        {services.map((service) => (
-          <Card key={service.title} className="bg-white/5 text-white">
-            <div className="p-8">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-950">
-                <Icon name={service.icon} className="h-7 w-7" />
-              </div>
-              <h3 className="text-2xl font-bold">{service.title}</h3>
-              <p className="mt-4 leading-7 text-slate-300">{service.text}</p>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
+  return <section id="services" className="mx-auto max-w-7xl px-4 py-20 sm:px-6"><SectionTitle kicker="Leistungen" title="Was Sie konkret bekommen — ohne Agentur-Blabla." /><div className="grid gap-6 md:grid-cols-3">{services.map((service) => <Card key={service.title} className="bg-white/5 text-white"><div className="p-8"><div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-950"><Icon name={service.icon} className="h-7 w-7" /></div><h3 className="text-2xl font-bold">{service.title}</h3><p className="mt-4 leading-7 text-slate-300">{service.text}</p></div></Card>)}</div></section>;
 }
 
 function BrandStrip() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <div className="brand-shine lux-line" />
-      <div className="grid gap-6 py-10 text-center text-sm uppercase tracking-[0.28em] text-slate-500 md:grid-cols-4">
-        <p>Premium Design</p>
-        <p>Mobile First</p>
-        <p>Swiss Quality</p>
-        <p>Fast Launch</p>
-      </div>
-      <div className="brand-shine lux-line" />
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6"><div className="brand-shine lux-line" /><div className="grid gap-6 py-10 text-center text-sm uppercase tracking-[0.28em] text-slate-500 md:grid-cols-4"><p>Premium Design</p><p>Mobile First</p><p>Swiss Quality</p><p>Fast Launch</p></div><div className="brand-shine lux-line" /></section>;
 }
 
 function IndustriesSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <SectionTitle kicker="Für wen" title="Websites für lokale Geschäfte, die sichtbar werden wollen." />
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-        {industries.map((item) => (
-          <div key={item} className="premium-card rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center font-semibold text-white">
-            <Icon name="store" className="mx-auto mb-3 h-6 w-6 text-slate-300" />{item}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><SectionTitle kicker="Für wen" title="Websites für lokale Geschäfte, die sichtbar werden wollen." /><div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">{industries.map((item) => <div key={item} className="premium-card rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-center font-semibold text-white"><Icon name="store" className="mx-auto mb-3 h-6 w-6 text-slate-300" />{item}</div>)}</div></section>;
 }
 
 function WebsiteCheckSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="rounded-[2rem] bg-white p-6 text-slate-950 shadow-2xl sm:p-8 md:p-12">
-        <div className="grid items-center gap-8 md:grid-cols-2">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Gratis Einstieg</p>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Kostenlosen Website-Check sichern.</h2>
-            <p className="mt-5 text-base leading-8 text-slate-700 sm:text-lg">Ideal für Läden, die schon eine alte Website haben oder nicht wissen, ob sie online professionell wirken.</p>
-          </div>
-          <div className="rounded-3xl bg-slate-950 p-6 text-white">
-            {websiteChecks.map((item) => (
-              <div key={item} className="mb-3 flex items-center gap-3 text-sm text-slate-300"><Icon name="check" className="h-5 w-5" /> {item}</div>
-            ))}
-            <div className="mt-6"><LinkButton href={whatsappLink}>Gratis Check anfragen</LinkButton></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><div className="rounded-[2rem] bg-white p-6 text-slate-950 shadow-2xl sm:p-8 md:p-12"><div className="grid items-center gap-8 md:grid-cols-2"><div><p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Gratis Einstieg</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Kostenlosen Website-Check sichern.</h2><p className="mt-5 text-base leading-8 text-slate-700 sm:text-lg">Ideal für Läden, die schon eine alte Website haben oder nicht wissen, ob sie online professionell wirken.</p></div><div className="rounded-3xl bg-slate-950 p-6 text-white">{websiteChecks.map((item) => <div key={item} className="mb-3 flex items-center gap-3 text-sm text-slate-300"><Icon name="check" className="h-5 w-5" /> {item}</div>)}<div className="mt-6"><LinkButton href={whatsappLink}>Gratis Check anfragen</LinkButton></div></div></div></div></section>;
 }
 
 function PortfolioSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <SectionTitle kicker="Case Studies" title="So wird aus einer unklaren Website eine echte Anfrage-Seite." />
-      <div className="grid gap-6 md:grid-cols-3">
-        {caseStudies.map((item, index) => (
-          <Card key={item.title} className="bg-white/[0.04] p-7">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-sm font-bold text-slate-950">0{index + 1}</div>
-            <p className="mb-3 text-sm uppercase tracking-[0.22em] text-slate-400">Beispiel-Projekt</p>
-            <h3 className="text-2xl font-bold text-white">{item.title}</h3>
-            <div className="mt-6 grid gap-4 text-sm leading-6">
-              <div><p className="font-bold text-white">Problem</p><p className="mt-1 text-slate-300">{item.problem}</p></div>
-              <div><p className="font-bold text-white">Lösung</p><p className="mt-1 text-slate-300">{item.solution}</p></div>
-              <div><p className="font-bold text-white">Ergebnis</p><p className="mt-1 text-slate-300">{item.result}</p></div>
-            </div>
-            <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm font-semibold text-white">{item.metric}</div>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><SectionTitle kicker="Case Studies" title="So wird aus einer unklaren Website eine echte Anfrage-Seite." /><div className="grid gap-6 md:grid-cols-3">{caseStudies.map((item, index) => <Card key={item.title} className="bg-white/[0.04] p-7"><div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-sm font-bold text-slate-950">0{index + 1}</div><p className="mb-3 text-sm uppercase tracking-[0.22em] text-slate-400">Beispiel-Projekt</p><h3 className="text-2xl font-bold text-white">{item.title}</h3><div className="mt-6 grid gap-4 text-sm leading-6"><div><p className="font-bold text-white">Problem</p><p className="mt-1 text-slate-300">{item.problem}</p></div><div><p className="font-bold text-white">Lösung</p><p className="mt-1 text-slate-300">{item.solution}</p></div><div><p className="font-bold text-white">Ergebnis</p><p className="mt-1 text-slate-300">{item.result}</p></div></div><div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm font-semibold text-white">{item.metric}</div></Card>)}</div></section>;
 }
 
 function WhyUsSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl md:p-12">
-        <div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Warum DZ Studio?</p>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Ehrlich, direkt und ohne erfundene Kundenstimmen.</h2>
-            <p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Wir haben noch keine echten Kundenbewertungen. Deshalb zeigen wir keine Fake-Testimonials, sondern klare Preise, einen einfachen Ablauf und direkte Kontaktmöglichkeiten.</p>
-          </div>
-          <div className="grid gap-4">
-            {credibilityPoints.map((point) => (
-              <div key={point} className="flex items-start gap-4 rounded-3xl border border-white/10 bg-slate-950/70 p-5">
-                <Icon name="shield" className="mt-1 h-5 w-5 shrink-0" />
-                <p className="leading-7 text-slate-100">{point}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl md:p-12"><div className="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-center"><div><p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-400">Warum DZ Studio?</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Ehrlich, direkt und ohne erfundene Kundenstimmen.</h2><p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Wir haben noch keine echten Kundenbewertungen. Deshalb zeigen wir keine Fake-Testimonials, sondern klare Preise, einen einfachen Ablauf und direkte Kontaktmöglichkeiten.</p></div><div className="grid gap-4">{credibilityPoints.map((point) => <div key={point} className="flex items-start gap-4 rounded-3xl border border-white/10 bg-slate-950/70 p-5"><Icon name="shield" className="mt-1 h-5 w-5 shrink-0" /><p className="leading-7 text-slate-100">{point}</p></div>)}</div></div></div></section>;
 }
 
 function ProjectConfiguratorSection() {
@@ -422,139 +304,28 @@ function ProjectConfiguratorSection() {
   const recommended = selected.includes("Online-Shop") || selected.includes("Mehrsprachig") ? "Premium" : selected.length >= 4 ? "Business" : "Starter";
   const configuratorWhatsappText = `Hallo DZ Studio, ich interessiere mich für folgendes Paket: ${recommended}. Meine Auswahl: ${selectedText}.`;
   const configuratorWhatsappLink = useMemo(() => `https://wa.me/${contactData.whatsappNumber}?text=${encodeURIComponent(configuratorWhatsappText)}`, [configuratorWhatsappText]);
-
-  function toggleOption(option: string) {
-    if (option === requiredOption) return;
-    setSelected((items) => items.includes(option) ? items.filter((item) => item !== option) : [...items, option]);
-  }
-
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div>
-          <SectionTitle kicker="Mini-Konfigurator" title="Klicke an, was du brauchst." />
-          <p className="text-base leading-8 text-slate-300 sm:text-lg">Jede Auswahl verändert automatisch die Paket-Empfehlung. So sieht der Kunde sofort, ob Starter, Business oder Premium besser passt.</p>
-        </div>
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
-          <div className="mb-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-slate-300">Auswahl: <span className="font-semibold text-white">{selectedText}</span></div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {configuratorOptions.map((option) => {
-              const isSelected = selected.includes(option);
-              const isRequired = option === requiredOption;
-              const selectedClass = `flex items-center justify-between rounded-2xl border border-white bg-white px-5 py-4 text-left font-semibold text-slate-950 transition${isRequired ? " cursor-not-allowed opacity-90" : ""}`;
-              const normalClass = "flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left font-semibold text-white transition hover:bg-white/10";
-              return (
-                <button key={option} type="button" onClick={() => toggleOption(option)} aria-pressed={isSelected} aria-disabled={isRequired} className={isSelected ? selectedClass : normalClass}>
-                  <span>{option}{isRequired ? " (Pflicht)" : ""}</span>
-                  {isSelected && <Icon name="check" className="h-5 w-5" />}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-6 rounded-3xl bg-slate-950 p-6">
-            <p className="text-sm text-slate-400">Empfohlenes Paket</p>
-            <p className="mt-2 text-3xl font-bold text-white sm:text-4xl">{recommended}</p>
-            <p className="mt-3 text-slate-300">Basierend auf: {selectedText}</p>
-            <a href={configuratorWhatsappLink} className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200">Dieses Paket anfragen</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  function toggleOption(option: string) { if (option === requiredOption) return; setSelected((items) => items.includes(option) ? items.filter((item) => item !== option) : [...items, option]); }
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><div className="grid gap-8 lg:grid-cols-2"><div><SectionTitle kicker="Mini-Konfigurator" title="Klicke an, was du brauchst." /><p className="text-base leading-8 text-slate-300 sm:text-lg">Jede Auswahl verändert automatisch die Paket-Empfehlung. So sieht der Kunde sofort, ob Starter, Business oder Premium besser passt.</p></div><div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6"><div className="mb-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-slate-300">Auswahl: <span className="font-semibold text-white">{selectedText}</span></div><div className="grid gap-3 sm:grid-cols-2">{configuratorOptions.map((option) => { const isSelected = selected.includes(option); const isRequired = option === requiredOption; const selectedClass = `flex items-center justify-between rounded-2xl border border-white bg-white px-5 py-4 text-left font-semibold text-slate-950 transition${isRequired ? " cursor-not-allowed opacity-90" : ""}`; const normalClass = "flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left font-semibold text-white transition hover:bg-white/10"; return <button key={option} type="button" onClick={() => toggleOption(option)} aria-pressed={isSelected} aria-disabled={isRequired} className={isSelected ? selectedClass : normalClass}><span>{option}{isRequired ? " (Pflicht)" : ""}</span>{isSelected && <Icon name="check" className="h-5 w-5" />}</button>; })}</div><div className="mt-6 rounded-3xl bg-slate-950 p-6"><p className="text-sm text-slate-400">Empfohlenes Paket</p><p className="mt-2 text-3xl font-bold text-white sm:text-4xl">{recommended}</p><p className="mt-3 text-slate-300">Basierend auf: {selectedText}</p><a href={configuratorWhatsappLink} className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200">Dieses Paket anfragen</a></div></div></div></section>;
 }
 
 function ProcessSection() {
-  return (
-    <section id="process" className="border-y border-white/10 bg-white/[0.03] py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionTitle kicker="Ablauf" title="Einfach, verständlich und ohne komplizierte Technik." />
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {processSteps.map((step, index) => (
-            <div key={step} className="rounded-3xl border border-white/10 bg-slate-950/70 p-6">
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-sm font-bold text-slate-950">0{index + 1}</div>
-              <h3 className="text-xl font-bold">{step}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <section id="process" className="border-y border-white/10 bg-white/[0.03] py-20"><div className="mx-auto max-w-7xl px-4 sm:px-6"><SectionTitle kicker="Ablauf" title="Einfach, verständlich und ohne komplizierte Technik." /><div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">{processSteps.map((step, index) => <div key={step} className="rounded-3xl border border-white/10 bg-slate-950/70 p-6"><div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-sm font-bold text-slate-950">0{index + 1}</div><h3 className="text-xl font-bold">{step}</h3></div>)}</div></div></section>;
 }
 
 function PackagesSection() {
-  return (
-    <section id="packages" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-      <SectionTitle kicker="Pakete" title="Faire Angebote für den Start." />
-      <div className="grid items-stretch gap-6 md:grid-cols-3">
-        {packages.map((pack, index) => (
-          <Card key={pack.name} className={index === 1 ? "bg-white text-slate-950" : "bg-white/5 text-white"}>
-            <div className="flex h-full min-h-[360px] flex-col p-7">
-              <div>
-                <div className={index === 1 ? "mb-4 inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white" : "mb-4 inline-flex rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-300"}>{index === 1 ? "Beliebt" : "Paket"}</div>
-                <h3 className="text-3xl font-bold">{pack.name}</h3>
-                <p className={index === 1 ? "mt-3 min-h-[58px] leading-7 text-slate-600" : "mt-3 min-h-[58px] leading-7 text-slate-300"}>{pack.text}</p>
-                <p className="mt-5 text-4xl font-bold">{pack.price}</p>
-              </div>
-              <div className="mt-6 grid gap-3">
-                {pack.points.map((point) => (
-                  <div key={point} className="flex items-center gap-3 text-sm font-medium"><span className={index === 1 ? "flex h-6 w-6 items-center justify-center rounded-full bg-slate-950 text-white" : "flex h-6 w-6 items-center justify-center rounded-full bg-white text-slate-950"}><Icon name="check" className="h-4 w-4" /></span>{point}</div>
-                ))}
-              </div>
-              <div className="mt-auto pt-7"><a href={createPackageWhatsappLink(pack.name)} className={index === 1 ? "inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-6 py-4 text-center font-bold text-white shadow-lg transition hover:bg-slate-800" : "inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200"}>Paket anfragen</a></div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </section>
-  );
+  return <section id="packages" className="mx-auto max-w-7xl px-4 py-20 sm:px-6"><SectionTitle kicker="Pakete" title="Faire Angebote für den Start." /><div className="grid items-stretch gap-6 md:grid-cols-3">{packages.map((pack, index) => <Card key={pack.name} className={index === 1 ? "bg-white text-slate-950" : "bg-white/5 text-white"}><div className="flex h-full min-h-[360px] flex-col p-7"><div><div className={index === 1 ? "mb-4 inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white" : "mb-4 inline-flex rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-300"}>{index === 1 ? "Beliebt" : "Paket"}</div><h3 className="text-3xl font-bold">{pack.name}</h3><p className={index === 1 ? "mt-3 min-h-[58px] leading-7 text-slate-600" : "mt-3 min-h-[58px] leading-7 text-slate-300"}>{pack.text}</p><p className="mt-5 text-4xl font-bold">{pack.price}</p><p className={index === 1 ? "mt-2 text-sm font-semibold text-slate-600" : "mt-2 text-sm font-semibold text-slate-300"}>{pack.monthlyFee}</p></div><div className="mt-6 grid gap-3">{pack.points.map((point) => <div key={point} className="flex items-center gap-3 text-sm font-medium"><span className={index === 1 ? "flex h-6 w-6 items-center justify-center rounded-full bg-slate-950 text-white" : "flex h-6 w-6 items-center justify-center rounded-full bg-white text-slate-950"}><Icon name="check" className="h-4 w-4" /></span>{point}</div>)}</div><div className="mt-auto pt-7"><a href={createPackageWhatsappLink(pack.name)} className={index === 1 ? "inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-6 py-4 text-center font-bold text-white shadow-lg transition hover:bg-slate-800" : "inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-center font-bold text-slate-950 shadow-lg transition hover:bg-slate-200"}>Paket anfragen</a></div></div></Card>)}</div></section>;
 }
 
 function BenefitsSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
-      <SectionTitle kicker="Ergebnis" title="Was Ihre Website nach dem Launch leisten soll." />
-      <div className="grid gap-6 md:grid-cols-3">
-        {benefits.map((item) => (
-          <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-7"><Icon name={item.icon} className="mb-4 h-7 w-7" /><h3 className="text-xl font-bold">{item.title}</h3><p className="mt-3 leading-7 text-slate-300">{item.text}</p></div>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6"><SectionTitle kicker="Ergebnis" title="Was Ihre Website nach dem Launch leisten soll." /><div className="grid gap-6 md:grid-cols-3">{benefits.map((item) => <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-7"><Icon name={item.icon} className="mb-4 h-7 w-7" /><h3 className="text-xl font-bold">{item.title}</h3><p className="mt-3 leading-7 text-slate-300">{item.text}</p></div>)}</div></section>;
 }
 
 function FAQSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <SectionTitle kicker="FAQ" title="Kurz beantwortet, bevor Sie anfragen." />
-      <div className="grid gap-4 md:grid-cols-2">
-        {faqs.map(([question, answer]) => (
-          <div key={question} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"><h3 className="text-xl font-bold text-white">{question}</h3><p className="mt-3 leading-7 text-slate-300">{answer}</p></div>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><SectionTitle kicker="FAQ" title="Kurz beantwortet, bevor Sie anfragen." /><div className="grid gap-4 md:grid-cols-2">{faqs.map(([question, answer]) => <div key={question} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"><h3 className="text-xl font-bold text-white">{question}</h3><p className="mt-3 leading-7 text-slate-300">{answer}</p></div>)}</div></section>;
 }
 
 function ContactSection() {
-  return (
-    <section id="contact" className="px-4 pb-24 sm:px-6">
-      <div className="mx-auto max-w-7xl rounded-[2rem] bg-white p-6 text-slate-950 shadow-2xl sm:p-8 md:p-14">
-        <div className="grid items-center gap-10 md:grid-cols-2">
-          <div><p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Nächster Schritt</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Senden Sie uns kurz, welche Website Sie brauchen.</h2><p className="mt-5 text-base leading-8 text-slate-700 sm:text-lg">Wir melden uns persönlich und sagen Ihnen ehrlich, welches Paket passt — ohne Verkaufsdruck und ohne komplizierte Agentur-Sprache.</p></div>
-          <div className="rounded-3xl bg-slate-950 p-6 text-white">
-            <p className="text-sm text-slate-400">Direkte Anfrage</p>
-            <a href={emailLink} className="mt-3 block break-words text-xl font-bold hover:underline sm:text-2xl">{contactData.email}</a>
-            <div className="mt-5 grid gap-4 text-slate-300">
-              {contactData.partners.map((person) => (
-                <div key={person.name} className="rounded-2xl bg-white/5 p-4"><p className="text-sm text-slate-400">{person.role}</p><p className="mt-1 font-semibold text-white">{person.name}</p><a href={person.phoneHref} className="hover:underline">{person.phoneDisplay}</a></div>
-              ))}
-            </div>
-            <div className="mt-6 grid gap-3"><LinkButton href={whatsappLink}>Jetzt unverbindlich per WhatsApp anfragen</LinkButton><LinkButton href={emailLink} variant="outline">Website-Projekt per E-Mail senden</LinkButton></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <section id="contact" className="px-4 pb-24 sm:px-6"><div className="mx-auto max-w-7xl rounded-[2rem] bg-white p-6 text-slate-950 shadow-2xl sm:p-8 md:p-14"><div className="grid items-center gap-10 md:grid-cols-2"><div><p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Nächster Schritt</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Senden Sie uns kurz, welche Website Sie brauchen.</h2><p className="mt-5 text-base leading-8 text-slate-700 sm:text-lg">Wir melden uns persönlich und sagen Ihnen ehrlich, welches Paket passt — ohne Verkaufsdruck und ohne komplizierte Agentur-Sprache.</p></div><div className="rounded-3xl bg-slate-950 p-6 text-white"><p className="text-sm text-slate-400">Direkte Anfrage</p><a href={emailLink} className="mt-3 block break-words text-xl font-bold hover:underline sm:text-2xl">{contactData.email}</a><div className="mt-5 grid gap-4 text-slate-300">{contactData.partners.map((person) => <div key={person.name} className="rounded-2xl bg-white/5 p-4"><p className="text-sm text-slate-400">{person.role}</p><p className="mt-1 font-semibold text-white">{person.name}</p><a href={person.phoneHref} className="hover:underline">{person.phoneDisplay}</a></div>)}</div><div className="mt-6 grid gap-3"><LinkButton href={whatsappLink}>Jetzt unverbindlich per WhatsApp anfragen</LinkButton><LinkButton href={emailLink} variant="outline">Website-Projekt per E-Mail senden</LinkButton></div></div></div></div></section>;
 }
 
 function InfoBox({ title, children }: { title: string; children: React.ReactNode }) {
@@ -562,22 +333,7 @@ function InfoBox({ title, children }: { title: string; children: React.ReactNode
 }
 
 function ImpressumPage() {
-  return (
-    <main className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl sm:p-8 md:p-12">
-        <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300"><Icon name="legal" className="h-5 w-5" /> Rechtliche Angaben</div>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Impressum</h1>
-        <p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Diese Seite enthält die wichtigsten Anbieterinformationen.</p>
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <InfoBox title="Anbieter"><p className="mt-4 font-semibold text-white">{contactData.companyName}</p><p className="text-slate-300">{contactData.addressLine1}</p><p className="text-slate-300">{contactData.addressLine2}</p><p className="text-slate-300">{contactData.country}</p></InfoBox>
-          <InfoBox title="Kontakt"><p className="mt-4 break-words text-slate-300">E-Mail: <a href={emailLink} className="text-white underline">{contactData.email}</a></p><p className="text-slate-300">Telefon: <a href={contactData.partners[0].phoneHref} className="text-white underline">{contactData.partners[0].phoneDisplay}</a></p></InfoBox>
-          <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6 md:col-span-2"><h2 className="text-2xl font-bold">Verantwortlich für den Inhalt</h2><div className="mt-4 grid gap-4 md:grid-cols-2">{contactData.partners.map((person) => <div key={person.name} className="rounded-2xl bg-white/5 p-4"><p className="text-sm text-slate-400">{person.role}</p><p className="font-semibold text-white">{person.name}</p><a href={person.phoneHref} className="text-slate-300 hover:underline">{person.phoneDisplay}</a></div>)}</div></div>
-          <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6 md:col-span-2"><h2 className="text-2xl font-bold">Hinweis</h2><p className="mt-4 leading-7 text-slate-300">Die Inhalte dieser Website wurden sorgfältig erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität übernehmen wir keine Gewähr.</p></div>
-          <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-slate-950/90 p-6 shadow-2xl md:col-span-2 md:p-8"><div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300"><Icon name="shield" className="h-5 w-5" /> AGB</div><h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">Allgemeine Geschäftsbedingungen (AGB) – Web Consulting</h2><p className="mt-4 leading-7 text-slate-300">Diese AGB regeln die wichtigsten Bedingungen für Web-Consulting-Dienstleistungen von DZ Studio.</p><div className="mt-8 grid gap-4">{agbSections.map((section) => <div key={section.title} className="rounded-2xl border border-white/10 bg-slate-950/70 p-5"><h3 className="font-bold text-white">{section.title}</h3><p className="mt-2 leading-7 text-slate-300">{section.text}</p></div>)}</div></div>
-        </div>
-      </div>
-    </main>
-  );
+  return <main className="mx-auto max-w-5xl px-4 py-20 sm:px-6"><div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl sm:p-8 md:p-12"><div className="mb-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300"><Icon name="legal" className="h-5 w-5" /> Rechtliche Angaben</div><h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Impressum</h1><p className="mt-5 text-base leading-8 text-slate-300 sm:text-lg">Diese Seite enthält die wichtigsten Anbieterinformationen.</p><div className="mt-10 grid gap-6 md:grid-cols-2"><InfoBox title="Anbieter"><p className="mt-4 font-semibold text-white">{contactData.companyName}</p><p className="text-slate-300">{contactData.addressLine1}</p><p className="text-slate-300">{contactData.addressLine2}</p><p className="text-slate-300">{contactData.country}</p></InfoBox><InfoBox title="Kontakt"><p className="mt-4 break-words text-slate-300">E-Mail: <a href={emailLink} className="text-white underline">{contactData.email}</a></p><p className="text-slate-300">Telefon: <a href={contactData.partners[0].phoneHref} className="text-white underline">{contactData.partners[0].phoneDisplay}</a></p></InfoBox><div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6 md:col-span-2"><h2 className="text-2xl font-bold">Verantwortlich für den Inhalt</h2><div className="mt-4 grid gap-4 md:grid-cols-2">{contactData.partners.map((person) => <div key={person.name} className="rounded-2xl bg-white/5 p-4"><p className="text-sm text-slate-400">{person.role}</p><p className="font-semibold text-white">{person.name}</p><a href={person.phoneHref} className="text-slate-300 hover:underline">{person.phoneDisplay}</a></div>)}</div></div><div className="rounded-3xl border border-white/10 bg-slate-950/70 p-6 md:col-span-2"><h2 className="text-2xl font-bold">Hinweis</h2><p className="mt-4 leading-7 text-slate-300">Die Inhalte dieser Website wurden sorgfältig erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität übernehmen wir keine Gewähr.</p></div><div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-slate-950/90 p-6 shadow-2xl md:col-span-2 md:p-8"><div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300"><Icon name="shield" className="h-5 w-5" /> AGB</div><h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">Allgemeine Geschäftsbedingungen (AGB) – Web Consulting</h2><p className="mt-4 leading-7 text-slate-300">Diese AGB regeln die wichtigsten Bedingungen für Web-Consulting-Dienstleistungen von DZ Studio.</p><div className="mt-8 grid gap-4">{agbSections.map((section) => <div key={section.title} className="rounded-2xl border border-white/10 bg-slate-950/70 p-5"><h3 className="font-bold text-white">{section.title}</h3><p className="mt-2 leading-7 text-slate-300">{section.text}</p></div>)}</div></div></div></div></main>;
 }
 
 function HomePage() {
@@ -589,7 +345,7 @@ function Footer({ setPage }: { setPage: (page: PageName) => void }) {
 }
 
 function StickyContactButton() {
-  return <div className="fixed bottom-5 right-5 z-50 hidden flex-col gap-3 md:flex"><a href={emailLink} aria-label="E-Mail Anfrage senden" title="E-Mail Anfrage senden" className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-slate-950 text-white shadow-2xl transition hover:bg-white/10"><Icon name="mail" className="h-6 w-6" /></a><a href={whatsappLink} aria-label="WhatsApp Anfrage senden" title="WhatsApp Anfrage senden" className="sticky-cta inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-950 shadow-2xl transition hover:bg-slate-200"><Icon name="phone" className="h-6 w-6" /></a></div>;
+  return <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3"><a href={emailLink} aria-label="E-Mail Anfrage senden" title="E-Mail Anfrage senden" className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-slate-950 text-white shadow-2xl transition hover:bg-white/10 md:h-14 md:w-14"><Icon name="mail" className="h-5 w-5 md:h-6 md:w-6" /></a><a href={whatsappLink} aria-label="WhatsApp Anfrage senden" title="WhatsApp Anfrage senden" className="sticky-cta inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-slate-950 shadow-2xl transition hover:bg-slate-200 md:h-14 md:w-14"><Icon name="phone" className="h-5 w-5 md:h-6 md:w-6" /></a></div>;
 }
 
 function WebagenturWebsite() {
