@@ -1,4 +1,4 @@
- import React, { useMemo, useState } from "react";
+  import React, { useMemo, useState } from "react";
 
 type PageName = "home" | "impressum";
 type IconName = "arrow" | "check" | "globe" | "phone" | "store" | "mail" | "whatsapp" | "instagram" | "shield" | "clock" | "star" | "legal";
@@ -58,8 +58,8 @@ const services: ServiceItem[] = [
 
 const packages: PackageItem[] = [
   { name: "Starter", price: "ab CHF 890", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Die solide Visitenkarte im Web.", points: ["1-Seiten Website (One-Pager)", "Individuelles Design", "Mobil optimiert", "Kontaktformular", "Basis-SEO", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
-  { name: "Business", price: "ab CHF 1’890", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Die professionelle Website für KMU.", points: ["Bis zu 5 Unterseiten", "Individuelles Design", "Erweiterte SEO-Optimierung", "Google Maps & Analytics", "Hosting CHF 25 / Monat"] },
-  { name: "Premium", price: "ab CHF 3’490", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Massgeschneidert mit allen Extras.", points: ["Unbegrenzte Seiten", "Eigenes CMS / Blog", "Mehrsprachigkeit", "Performance-Tuning", "Hosting CHF 25 / Monat"] },
+  { name: "Business", price: "ab CHF 1’890", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Die professionelle Website für KMU.", points: ["Bis zu 5 Unterseiten", "Individuelles Design", "Erweiterte SEO-Optimierung", "Google Maps & Analytics", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
+  { name: "Premium", price: "ab CHF 3’490", monthlyFee: "+ CHF 25 / Monat Hosting", text: "Massgeschneidert mit allen Extras.", points: ["Unbegrenzte Seiten", "Eigenes CMS / Blog", "Mehrsprachigkeit", "Performance-Tuning", "Hosting CHF 25 / Monat", "Gratis Erstgespräch"] },
 ];
 
 const industries = ["Restaurants", "Coiffeure", "Kioske", "Handwerker", "Kleine Shops", "Vereine", "Startups", "Beauty-Studios"];
@@ -99,6 +99,7 @@ export function runContentTests(): TestResult[] {
     { name: "three packages", pass: packages.length === 3 },
     { name: "monthly hosting fee visible", pass: packages.every((pack) => pack.monthlyFee === "+ CHF 25 / Monat Hosting") },
     { name: "hosting included in all packages", pass: packages.every((pack) => pack.points.includes("Hosting CHF 25 / Monat")) },
+    { name: "free first consultation included in all packages", pass: packages.every((pack) => pack.points.includes("Gratis Erstgespräch")) },
     { name: "four process steps", pass: processSteps.length === 4 },
     { name: "agb has nine sections", pass: agbSections.length === 9 },
     { name: "email link exists", pass: emailLink.startsWith("mailto:") },
