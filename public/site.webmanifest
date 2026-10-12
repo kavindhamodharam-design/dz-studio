@@ -1,0 +1,10 @@
+{
+  "name": "DZ Studio",
+  "short_name": "DZ Studio",
+  "description": "Moderne Websites für lokale Unternehmen in der Schweiz.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#020617",
+  "background_color": "#020617"
+}
