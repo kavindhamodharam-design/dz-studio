@@ -1,24 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="swissLogoBlue" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#2563eb"/>
       <stop offset="55%" stop-color="#1d4ed8"/>
-      <stop offset="100%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#1e40af"/>
     </linearGradient>
   </defs>
 
-  <rect width="512" height="512" rx="110" fill="#020617"/>
+  <rect width="512" height="512" fill="#ffffff"/>
 
-  <g transform="translate(50, 115) scale(0.97)">
-    <path
-      d="M389 136 L374 119 L350 136 L330 118 L308 113 L319 79 L306 61 L295 59 L277 44 L260 38 L246 41 L229 26 L217 25 L206 36 L208 53 L193 48 L168 56 L141 52 L123 70 L89 63 L83 97 L45 128 L41 152 L16 171 L14 211 L0 221 L9 238 L23 238 L39 209 L70 202 L75 239 L112 273 L169 267 L209 212 L266 277 L292 197 L316 219 L363 223 L356 183 L388 186 L423 155 Z"
-      fill="url(#swissLogoBlue)"
-      stroke="#ffffff"
-      stroke-width="7"
-      stroke-linejoin="round"
-    />
+  <path
+    d="M484 241 L452 224 L438 208 L411 225 L388 205 L364 200 L374 160 L361 144 L350 142 L329 126 L315 121 L298 124 L280 108 L270 107 L262 115 L264 134 L259 137 L243 131 L218 140 L189 136 L170 154 L135 148 L129 182 L89 214 L83 242 L58 261 L56 302 L42 314 L49 326 L58 326 L76 295 L112 287 L121 330 L161 363 L214 358 L262 298 L319 363 L347 282 L376 306 L419 310 L414 269 L450 270 Z"
+    fill="url(#blue)"
+  />
 
-    <rect x="178" y="78" width="44" height="122" rx="4" fill="white"/>
-    <rect x="139" y="117" width="122" height="44" rx="4" fill="white"/>
-  </g>
+  <rect x="226" y="159" width="48" height="132" rx="6" fill="#ffffff"/>
+  <rect x="184" y="201" width="132" height="48" rx="6" fill="#ffffff"/>
 </svg>
